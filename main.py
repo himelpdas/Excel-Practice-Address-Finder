@@ -1,4 +1,4 @@
-from openpyxl import load_workbook, Workbook
+from openpyxl import load_workbook, Workbook, styles
 import requests
 import time
 from bs4 import BeautifulSoup
@@ -7,7 +7,9 @@ wb = load_workbook('practice_names.xlsx')
 wb2 = Workbook()
 out = wb2.active
 out["A1"] = "Name"
+out['A1'].font = styles.Font(color=styles.colors.BLUE)  # http://bit.ly/2jAeYM5
 out["B1"] = "Address"
+out['B1'].font = styles.Font(color=styles.colors.BLUE)
 dest_filename = 'output.xlsx'  # print wb.get_sheet_names()
 sheet = wb['Engagement  Total']
 cell = "A%s"  # names
@@ -58,12 +60,17 @@ while 1:
                     out["B%s" % row] = soup.find("address").get_text(" ")  # join text with space http://bit.ly/2jAsRtF
                 else:
                     out["B%s" % row] = "No Healthgrades Profile"
+                    out["B%s" % row].font = styles.Font(color=styles.colors.RED)
+        else:
+            out["B%s" % row] = "Name Not Found In NY"
+            out["B%s" % row].font = styles.Font(color=styles.colors.RED)
 
     if not_found:
         out["B%s" % row] = "Provider Not Found"
+        out["B%s" % row].font = styles.Font(color=styles.colors.RED)
     out[current] = name
 
-    time.sleep(0.333)
+    time.sleep(0.15)
     row += 1
 
 wb2.save(filename=dest_filename)
